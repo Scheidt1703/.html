@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jahrgangs-Referenz Frankreich — Alain Scheidt Selection</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#1a1a1a;background:#fff;padding:1.5rem;font-size:14px}
+h1{font-size:20px;font-weight:500;margin-bottom:.25rem;color:#1a1a1a}
+.subtitle{font-size:13px;color:#666;margin-bottom:1.25rem}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1rem;font-size:12px;color:#555;align-items:center;padding:10px 14px;background:#f7f7f7;border-radius:8px}
+.legend strong{font-weight:500;color:#1a1a1a}
+.controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.25rem}
+.controls select,.controls input{font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid #d0d0d0;background:#fff;color:#1a1a1a;height:34px}
+.controls input{flex:1;min-width:140px}
+.tbl-wrap{overflow-x:auto;border:1px solid #e0e0e0;border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:13px;min-width:700px}
+thead{background:#f5f5f5}
+th{padding:9px 12px;text-align:left;font-weight:500;font-size:11px;color:#555;border-bottom:1px solid #e0e0e0;white-space:nowrap;text-transform:uppercase;letter-spacing:.04em}
+td{padding:8px 12px;vertical-align:top;border-bottom:1px solid #f0f0f0;line-height:1.5}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.badge{display:inline-block;font-size:11px;padding:2px 7px;border-radius:20px;font-weight:500;white-space:nowrap;margin:1px 2px}
+.b-r{background:#FAECE7;color:#993C1D}
+.b-w{background:#E6F1FB;color:#185FA5}
+.b-s{background:#EEEDFE;color:#3C3489}
+.b-ro{background:#FBEAF0;color:#72243E}
+.b-sc{background:#E1F5EE;color:#0F6E56}
+.years{display:flex;flex-wrap:wrap;gap:3px}
+.yr{display:inline-block;font-size:11px;padding:2px 6px;border-radius:4px;font-weight:500}
+.yr-leg{background:#EAF3DE;color:#3B6D11}
+.yr-good{background:#E6F1FB;color:#185FA5}
+.note{font-size:12px;color:#666}
+.region-header td{background:#f0f0f0;font-weight:500;font-size:11px;color:#555;padding:6px 12px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid #e0e0e0}
+.app-name{font-weight:500;font-size:13px}
+.wg-name{font-size:11px;color:#888;margin-top:1px}
+</style>
+</head>
+<body>
+<h1>Jahrgangs-Referenz Frankreich</h1>
+<p class="subtitle">Alain Scheidt Selection · Alle großen französischen Regionen · Legendäre &amp; sehr gute Jahrgänge seit 1900</p>
+
+<div class="legend">
+  <strong>Bewertung:</strong>
+  <span><span class="yr yr-leg" style="padding:2px 8px">Legendär</span> 98–100 Pkt.</span>
+  <span><span class="yr yr-good" style="padding:2px 8px">Sehr gut</span> 92–97 Pkt.</span>
+  <span style="margin-left:8px"><strong>Farbe:</strong></span>
+  <span><span class="badge b-r">R</span> Rot</span>
+  <span><span class="badge b-w">W</span> Weiß</span>
+  <span><span class="badge b-s">S</span> Süß</span>
+  <span><span class="badge b-ro">Ro</span> Rosé</span>
+  <span><span class="badge b-sc">Sc</span> Schaumwein</span>
+</div>
+
+<div class="controls">
+  <input type="text" id="srch" placeholder="🔍 Suche (Region, Appellation, Jahr…)" oninput="filterTable()">
+  <select id="fReg" onchange="filterTable()">
+    <option value="">Alle Regionen</option>
+    <option>Bordeaux</option><option>Burgund</option><option>Rhône</option>
+    <option>Loire</option><option>Champagne</option><option>Elsass</option>
+    <option>Languedoc-Roussillon</option><option>Provence</option>
+    <option>Jura / Savoie</option><option>Sud-Ouest</option>
+  </select>
+  <select id="fColor" onchange="filterTable()">
+    <option value="">Alle Farben</option>
+    <option value="Rot">Rot</option><option value="Weiß">Weiß</option>
+    <option value="Süß">Süß/Edelsüß</option><option value="Rosé">Rosé</option>
+    <option value="Schaumwein">Schaumwein</option>
+  </select>
+  <select id="fEra" onchange="filterTable()">
+    <option value="">Alle Epochen</option>
+    <option value="1900">1900–1929</option><option value="1930">1930–1959</option>
+    <option value="1960">1960–1979</option><option value="1980">1980–1999</option>
+    <option value="2000">2000–2015</option><option value="2016">2016–heute</option>
+  </select>
+</div>
+
+<div class="tbl-wrap">
+<table id="mainTable">
+<thead>
+  <tr>
+    <th style="width:110px">Region</th>
+    <th style="width:170px">Appellation / Weingut</th>
+    <th style="width:60px">Farbe</th>
+    <th style="width:200px">Legendäre Jahrgänge</th>
+    <th style="width:200px">Sehr gute Jahrgänge</th>
+    <th>Notizen</th>
+  </tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<script>
+const DATA = [
+  {region:"Bordeaux",appellation:"Pauillac (Ges.)",weingut:"",farbe:"Rot",leg:["1900","1921","1928","1945","1961","1982","1990","2000","2005","2009","2010","2015","2016"],good:["1929","1953","1959","1966","1970","1975","1985","1995","1996","2003","2006","2008","2012","2018","2019"],note:"Heimat von Lafite, Latour, Mouton. 1945 und 1961 gelten als Jahrhundertjahrgänge."},
+  {region:"Bordeaux",appellation:"Pauillac — Château Latour",weingut:"Château Latour",farbe:"Rot",leg:["1945","1961","1982","2000","2003","2010"],good:["1959","1966","1985","1990","1996","2005","2009","2015","2016"],note:"Latour besonders stark in 'schwierigen' Jahren durch Tiefe des Kellers und Alter der Reben."},
+  {region:"Bordeaux",appellation:"Pauillac — Château Lafite",weingut:"Château Lafite Rothschild",farbe:"Rot",leg:["1900","1921","1959","1982","1986","1996","2010"],good:["1945","1961","1985","2000","2003","2005","2009","2016"],note:"Eleganzstil, profitiert von kühlen Jahrgängen wie 1996."},
+  {region:"Bordeaux",appellation:"Saint-Émilion / Pomerol",weingut:"",farbe:"Rot",leg:["1921","1947","1964","1982","1989","1998","2000","2009","2010","2015"],good:["1945","1953","1959","1966","1985","1990","1995","2005","2012","2016","2018"],note:"Merlot-dominiert. 1947 Cheval Blanc gilt als einer der besten Weine des Jahrhunderts."},
+  {region:"Bordeaux",appellation:"Pomerol — Pétrus",weingut:"Pétrus",farbe:"Rot",leg:["1945","1947","1961","1964","1970","1971","1982","1989","1990","2000","2009"],good:["1953","1985","1995","1998","2005","2010","2015"],note:"100% Merlot auf blauem Ton. Überragende Jahre bei Wärme und Reife."},
+  {region:"Bordeaux",appellation:"Margaux",weingut:"",farbe:"Rot",leg:["1900","1928","1945","1953","1961","1982","1983","2000","2010","2015"],good:["1921","1966","1985","1990","1995","1996","2005","2009","2012","2016","2018"],note:"Parfüm und Feinheit. Château Margaux 1900 legendär."},
+  {region:"Bordeaux",appellation:"Pessac-Léognan (Ges.)",weingut:"",farbe:"Rot",leg:["1928","1945","1961","1982","1989","2000","2009","2010","2016"],good:["1953","1959","1966","1970","1985","1990","1995","2005","2018"],note:"Haut-Brion und La Mission führend. Trocken und mineralisch."},
+  {region:"Bordeaux",appellation:"Pessac-Léognan — Haut-Bergey",weingut:"Château Haut-Bergey",farbe:"Rot",leg:["2000","2009","2010","2016"],good:["2005","2012","2015","2018","2019","2020"],note:"Biodyvin-zertifiziert. Moderne Ära unter Sylviane Garcin ab 1991 neu positioniert."},
+  {region:"Bordeaux",appellation:"Pessac-Léognan — Haut-Bergey",weingut:"Château Haut-Bergey",farbe:"Weiß",leg:["2005","2010","2019"],good:["2009","2012","2015","2016","2018","2020"],note:"Sauvignon Blanc/Sémillon. Weißweine in Pessac-Léognan oft langlebiger als erwartet."},
+  {region:"Bordeaux",appellation:"Sauternes / Barsac",weingut:"",farbe:"Süß",leg:["1900","1921","1937","1945","1947","1959","1967","1975","1983","1988","1989","1990","2001","2005","2009"],good:["1928","1955","1970","1971","1976","1986","1996","2003","2007","2011","2013","2015"],note:"Botrytis-abhängig. Château d'Yquem 1921 gilt als einer der besten Süßweine der Geschichte."},
+  {region:"Burgund",appellation:"Gevrey-Chambertin (Ges.)",weingut:"",farbe:"Rot",leg:["1928","1945","1947","1959","1964","1971","1978","1985","1990","1999","2002","2005","2010","2015"],good:["1952","1961","1966","1969","1976","1980","1988","1993","1996","2009","2012","2016","2017","2018","2019"],note:"Pinot Noir auf Kalkstein. Grosse Jahrgänge brauchen Jahrzehnte zur Entfaltung."},
+  {region:"Burgund",appellation:"Romanée-Conti / La Tâche — DRC",weingut:"Domaine de la Romanée-Conti",farbe:"Rot",leg:["1937","1945","1959","1971","1978","1990","1999","2005","2010","2015"],good:["1952","1964","1969","1985","1993","1996","2002","2009","2012","2016","2019"],note:"La Tâche und Romanée-Conti: Benchmarks des Burgund. 1945 DRC RC: teuerster Wein aller Zeiten (2018)."},
+  {region:"Burgund",appellation:"Chambolle-Musigny / Vosne-Romanée",weingut:"",farbe:"Rot",leg:["1945","1959","1971","1985","1990","1999","2002","2010","2015"],good:["1952","1964","1978","1980","1993","1996","2005","2009","2012","2016","2018"],note:"Zarteste Pinot-Noirs der Côte de Nuits. Musigny-Grands Crus besonders langlebig."},
+  {region:"Burgund",appellation:"Meursault / Puligny-Montrachet",weingut:"",farbe:"Weiß",leg:["1928","1945","1962","1969","1973","1978","1992","1995","1996","2002","2005","2010","2014","2019"],good:["1955","1959","1966","1971","1976","1985","1989","1990","2008","2009","2012","2016","2017","2020"],note:"Chardonnay auf Kalkstein. Coche-Dury und Leflaive als Referenz. 10–20 Jahre Lagerpotenzial."},
+  {region:"Burgund",appellation:"Montrachet — Domaine Leflaive",weingut:"Domaine Leflaive",farbe:"Weiß",leg:["1962","1978","1992","1995","1996","2002","2005","2010","2019"],good:["1966","1971","1985","1989","2008","2012","2014","2017","2020"],note:"Chevalier- und Bâtard-Montrachet. Biodynamisch seit 1997."},
+  {region:"Burgund",appellation:"Chablis Grands Crus",weingut:"",farbe:"Weiß",leg:["1945","1961","1978","1986","1989","1995","1996","2002","2010","2014","2017"],good:["1959","1966","1971","1976","1985","1992","2000","2005","2008","2009","2012","2016","2019","2020"],note:"Kimmeridge-Kalk. Premiers und Grands Crus lagerfähig bis 15+ Jahre."},
+  {region:"Burgund",appellation:"Beaujolais Cru (Moulin-à-Vent, Morgon)",weingut:"",farbe:"Rot",leg:["1945","1947","1959","1969","1976","1989","2009","2015"],good:["1961","1964","1970","1971","1985","1990","1996","2010","2012","2016","2018"],note:"Gamay. Crus können 20+ Jahre altern. Moulin-à-Vent und Morgon lagerfähigste."},
+  {region:"Rhône",appellation:"Hermitage (Ges.)",weingut:"",farbe:"Rot",leg:["1929","1945","1961","1978","1990","1999","2003","2010","2015"],good:["1952","1955","1959","1964","1970","1972","1985","1988","1995","1996","2005","2006","2009","2012","2016","2017"],note:"Syrah pur. Chave, Jaboulet La Chapelle. Hermitage 1961 legendär."},
+  {region:"Rhône",appellation:"Hermitage — Domaine Combier (Saint-Joseph)",weingut:"Domaine Combier",farbe:"Rot",leg:["1990","2003","2010","2015"],good:["1985","1995","1999","2005","2006","2009","2012","2016","2017","2018","2019"],note:"Biozertifiziert. Côte Sauvage und Clos des Grives als Flaggschiffe."},
+  {region:"Rhône",appellation:"Crozes-Hermitage — Domaine Combier",weingut:"Domaine Combier",farbe:"Rot",leg:["1990","2003","2010","2015","2016"],good:["1985","1999","2005","2006","2009","2012","2017","2018","2019","2020"],note:"Clos des Grives: Vorzeigeposition. Modernes, reines Syrah-Profil."},
+  {region:"Rhône",appellation:"Côte-Rôtie",weingut:"",farbe:"Rot",leg:["1929","1945","1961","1969","1978","1985","1988","1990","1999","2003","2010","2015","2017"],good:["1952","1955","1966","1970","1976","1989","1995","1996","2005","2006","2009","2012","2016","2018"],note:"Syrah + bis 20% Viognier. Guigal La Mouline/Landonne/Turque seit 1976 Weltklasse."},
+  {region:"Rhône",appellation:"Châteauneuf-du-Pape (Ges.)",weingut:"",farbe:"Rot",leg:["1929","1945","1961","1978","1981","1989","1990","1998","2000","2003","2007","2009","2010","2015","2016"],good:["1967","1970","1979","1985","1988","1994","1995","1999","2001","2005","2006","2012","2017","2018","2019"],note:"13 Rebsorten erlaubt. Grenache-dominant. Rayas, Beaucastel, Henri Bonneau als Referenz."},
+  {region:"Rhône",appellation:"Gigondas — Clos du Joncuas",weingut:"Clos du Joncuas",farbe:"Rot",leg:["1978","1989","1990","1998","2003","2007","2009","2010","2015","2016"],good:["1985","1988","1994","1999","2001","2005","2006","2012","2017","2018","2019","2020"],note:"Biodyvin. Grenache/Syrah/Mourvèdre auf Ton-Kalkstein der Dentelles. Dany Chastan."},
+  {region:"Rhône",appellation:"Gigondas (Ges.)",weingut:"",farbe:"Rot",leg:["1961","1978","1989","1990","1999","2003","2007","2009","2010","2015"],good:["1967","1979","1985","1988","1994","1998","2001","2005","2006","2012","2016","2017","2018"],note:"Châteauneuf-Qualität zum besseren Preis. Saint-Gayan, Raspail-Ay führend."},
+  {region:"Rhône",appellation:"Vacqueyras / Séguret",weingut:"",farbe:"Rot",leg:["1978","1989","1990","2003","2009","2010","2015"],good:["1985","1988","1998","1999","2005","2006","2007","2012","2016","2017","2018","2019"],note:"Aufstrebende Südrhône-Appellationen. Grenache/Syrah."},
+  {region:"Rhône",appellation:"Hermitage Blanc / Saint-Péray",weingut:"",farbe:"Weiß",leg:["1929","1945","1978","1986","1990","1996","2003","2010","2015"],good:["1959","1962","1966","1969","1985","1989","1995","2005","2009","2012","2016","2017","2019"],note:"Marsanne/Roussanne. Hermitage Blanc von Chave bis 50 Jahre lagerfähig."},
+  {region:"Rhône",appellation:"Condrieu (Viognier)",weingut:"",farbe:"Weiß",leg:["1990","1995","1996","1999","2003","2005","2010","2015"],good:["1985","1989","1994","2001","2006","2007","2009","2012","2016","2017","2018","2019"],note:"100% Viognier. Früh trinkbar, selten über 10 Jahre gelagert."},
+  {region:"Loire",appellation:"Pouilly-Fumé / Sancerre",weingut:"",farbe:"Weiß",leg:["1921","1947","1959","1971","1989","1996","2002","2005","2014","2018","2019"],good:["1945","1952","1964","1969","1976","1985","1990","1995","2000","2003","2008","2010","2012","2015","2016","2020"],note:"Sauvignon Blanc auf Silex/Kalk. Dagueneau und Bourgeois als Referenz."},
+  {region:"Loire",appellation:"Coteaux du Layon — Juchepie",weingut:"Domaine de Juchepie",farbe:"Süß",leg:["1947","1959","1971","1976","1989","1990","1997","2002","2003","2005","2011","2014","2015"],good:["1945","1964","1969","1983","1985","1988","1993","1996","1999","2001","2007","2009","2010","2016","2018"],note:"Biodyvin+Demeter. Chenin Blanc. Eddy Oosterlinck-Bracke. Layon-Perlen auf Schiefer."},
+  {region:"Loire",appellation:"Anjou / Savennières",weingut:"",farbe:"Weiß",leg:["1921","1947","1959","1976","1989","1996","1997","2002","2014","2018"],good:["1945","1964","1969","1971","1983","1985","1990","2000","2003","2005","2007","2010","2015","2016","2019"],note:"Trockener Chenin Blanc. Coulée de Serrant (Joly) als Benchmark. Lagerfähig bis 30+ Jahre."},
+  {region:"Loire",appellation:"Vouvray Moelleux/Demi-Sec",weingut:"",farbe:"Süß",leg:["1921","1947","1959","1964","1976","1989","1990","1995","1997","2002","2005","2014"],good:["1928","1945","1955","1969","1971","1985","1988","1993","1996","2003","2007","2009","2010","2011","2015","2016"],note:"Chenin Blanc. Domaine Huet unübertroffene Referenz."},
+  {region:"Loire",appellation:"Chinon / Bourgueil",weingut:"",farbe:"Rot",leg:["1947","1959","1964","1976","1989","1990","1996","2002","2005","2015"],good:["1945","1955","1969","1971","1985","1988","1995","2000","2003","2009","2010","2012","2016","2018"],note:"Cabernet Franc auf Tuffstein. Olga Raffault und Charles Joguet führend."},
+  {region:"Champagne",appellation:"Champagne Prestige Cuvées (Ges.)",weingut:"",farbe:"Schaumwein",leg:["1928","1929","1945","1947","1952","1955","1959","1961","1964","1969","1971","1973","1975","1978","1982","1985","1988","1990","1995","1996","1999","2002","2004","2008","2012","2013","2015"],good:["1906","1914","1921","1937","1943","1949","1953","1966","1970","1976","1979","1981","1983","1986","1989","1992","1997","2000","2003","2005","2006","2009","2010","2014","2016","2018","2019"],note:"Nur Jahrgangschampagner in ausgezeichneten Jahren deklariert. 1996 und 2002 Benchmark."},
+  {region:"Champagne",appellation:"Champagne Fleury (Côte des Bar)",weingut:"Champagne Fleury",farbe:"Schaumwein",leg:["1988","1990","1996","2002","2008","2012"],good:["1985","1995","1999","2004","2005","2009","2013","2015","2016","2018"],note:"Biodyvin. Erster biodynamischer Champagner-Betrieb (1989). Jean-Sébastien Fleury."},
+  {region:"Champagne",appellation:"Dom Pérignon",weingut:"Dom Pérignon / Moët & Chandon",farbe:"Schaumwein",leg:["1952","1955","1959","1961","1964","1969","1971","1973","1975","1982","1985","1990","1996","2002","2008"],good:["1928","1945","1947","1949","1953","1966","1970","1976","1978","1988","1992","1995","2000","2004","2006","2009","2012","2013"],note:"P2 und P3 Plénitudes zeigen Langlebigkeit bis 30+ Jahre."},
+  {region:"Champagne",appellation:"Krug Grande Cuvée / Clos du Mesnil",weingut:"Krug",farbe:"Schaumwein",leg:["1928","1945","1961","1966","1971","1979","1981","1985","1988","1990","1995","1996","2002","2004","2008"],good:["1955","1959","1964","1969","1973","1975","1982","1986","1989","1992","2000","2003","2006","2009","2012","2014"],note:"Clos du Mesnil: Blanc de Blancs-Legende."},
+  {region:"Elsass",appellation:"Riesling Grand Cru",weingut:"",farbe:"Weiß",leg:["1921","1945","1947","1959","1961","1966","1971","1976","1983","1985","1988","1989","1990","1995","1996","2001","2007","2008","2010","2014","2016","2017","2019"],good:["1928","1934","1953","1962","1969","1973","1975","1978","1979","1986","1992","1997","2002","2004","2005","2006","2009","2011","2012","2015","2018","2020"],note:"Bestes Riesling-Terroir außerhalb Deutschlands. Zind-Humbrecht und Trimbach als Benchmark."},
+  {region:"Elsass",appellation:"Gewurztraminer / Pinot Gris SGN",weingut:"",farbe:"Süß",leg:["1921","1945","1959","1961","1971","1976","1983","1988","1989","1990","1994","1995","1997","2001","2005","2007","2010"],good:["1928","1947","1953","1962","1966","1969","1978","1985","1996","2000","2002","2006","2009","2011","2012","2014","2015"],note:"SGN (Sélection de Grains Nobles) extrem selten und langlebig. Zind-Humbrecht führend."},
+  {region:"Elsass",appellation:"Trimbach — Clos Ste-Hune",weingut:"Domaine Trimbach",farbe:"Weiß",leg:["1959","1961","1966","1971","1976","1983","1985","1988","1990","1995","2001","2007","2008","2014"],good:["1921","1945","1953","1962","1969","1978","1989","1996","2002","2005","2009","2010","2012","2016","2017"],note:"Monopol Riesling Rosacker Grand Cru. Einer der langlebigsten Weißweine Frankreichs. 30–40 Jahre."},
+  {region:"Languedoc-Roussillon",appellation:"Languedoc (Ges.)",weingut:"",farbe:"Rot",leg:["1989","1990","1998","2001","2003","2007","2009","2010","2015","2016"],good:["1985","1991","1994","1995","1999","2004","2005","2006","2011","2012","2013","2017","2018","2019"],note:"Grenache/Syrah/Mourvèdre. Mas de Daumas Gassac und Grange des Pères führend."},
+  {region:"Languedoc-Roussillon",appellation:"Languedoc — Domaine de la Marfée",weingut:"Domaine de la Marfée",farbe:"Weiß",leg:["2010","2015","2019","2023"],good:["2005","2007","2009","2012","2016","2018","2020","2021"],note:"Biodynamisch. Frissons d'Ombelles: Roussanne/Chardonnay/Viognier. Thierry Hasard."},
+  {region:"Languedoc-Roussillon",appellation:"Languedoc — Domaine de la Marfée",weingut:"Domaine de la Marfée",farbe:"Rot",leg:["2001","2007","2010","2015","2016"],good:["2003","2005","2009","2012","2013","2017","2018","2019","2020"],note:"Les Champs Murmurés: Syrah/Mourvèdre. Saint-Georges-d'Orques AOC."},
+  {region:"Languedoc-Roussillon",appellation:"Roussillon / Banyuls (Süß)",weingut:"",farbe:"Süß",leg:["1945","1961","1971","1979","1989","1990","2000","2001","2003","2007","2009","2010","2015"],good:["1947","1955","1964","1966","1976","1985","1988","1994","1996","1998","2005","2006","2012","2016","2018"],note:"Grenache-Mutage. Banyuls Vintage und Rancio bis 50+ Jahre lagerfähig. Mas Blanc (Parcé) als Ikone."},
+  {region:"Provence",appellation:"Les Baux-de-Provence — Romanin",weingut:"Château Romanin",farbe:"Rot",leg:["1989","1998","2003","2007","2009","2010","2015","2016"],good:["1985","1994","1999","2001","2005","2006","2012","2017","2018","2019","2020"],note:"Biodyvin. Théo Buravand. Amphitheater-Terroir. GSM-Assemblage."},
+  {region:"Provence",appellation:"Côtes de Provence — Richeaume",weingut:"Domaine Richeaume",farbe:"Rot",leg:["1989","1990","1998","2003","2009","2010","2015","2016"],good:["1985","1994","1999","2001","2005","2006","2007","2012","2017","2018","2019","2020"],note:"Biodyvin. Vertrieb via Julius Hoesch GmbH. Cabernet/Syrah/Grenache."},
+  {region:"Provence",appellation:"Bandol (Rot)",weingut:"",farbe:"Rot",leg:["1961","1967","1970","1971","1975","1978","1985","1989","1990","1995","2000","2003","2007","2010","2015","2016"],good:["1952","1964","1976","1979","1983","1988","1993","1996","1999","2001","2005","2006","2009","2012","2017","2018"],note:"Mourvèdre dominant. Domaine Tempier Führungsrolle. Lagerfähig bis 30 Jahre."},
+  {region:"Provence",appellation:"Cassis — Château Barbanau",weingut:"Château Barbanau",farbe:"Weiß",leg:["1989","1998","2005","2010","2015","2019"],good:["1994","1999","2001","2003","2007","2009","2012","2016","2017","2018","2020"],note:"Cassis AOC. Clairette/Ugni Blanc/Marsanne. Romain Tchénio."},
+  {region:"Provence",appellation:"Côtes de Provence Rosé",weingut:"",farbe:"Rosé",leg:["1989","1998","2007","2010","2015","2019"],good:["1985","1994","1999","2003","2005","2006","2009","2012","2016","2017","2018","2020"],note:"Zum frühen Trinken. Ausnahmen: Bandol Rosé (Tempier) kann 5–10 Jahre reifen."},
+  {region:"Jura / Savoie",appellation:"Vin Jaune (Château-Chalon)",weingut:"",farbe:"Weiß",leg:["1929","1945","1947","1959","1961","1966","1971","1976","1990","1995","1996","2000","2005","2009","2010","2014","2015"],good:["1952","1953","1955","1964","1969","1978","1982","1983","1985","1989","1992","1997","1999","2002","2007","2008","2012","2016","2018"],note:"Savagnin unter Voile 6 Jahre. Lagerfähig bis 50–100 Jahre. Nur beste Jahre als Château-Chalon."},
+  {region:"Jura / Savoie",appellation:"Jura Chardonnay (ouillé)",weingut:"",farbe:"Weiß",leg:["1990","1996","2002","2005","2010","2014","2015","2019"],good:["1985","1989","1995","1999","2000","2007","2008","2009","2012","2016","2017","2018","2020"],note:"Chablis-naher Stil ohne Voile-Einfluss. Tissot und Macle führend."},
+  {region:"Jura / Savoie",appellation:"Jura Vin de Paille",weingut:"",farbe:"Süß",leg:["1945","1947","1959","1976","1989","1990","2003","2009","2011","2015"],good:["1955","1961","1966","1971","1985","1996","1997","2005","2007","2010","2014","2016"],note:"Getrocknete Trauben. Extrem konzentriert, Jahrzehnte lagerfähig."},
+  {region:"Sud-Ouest",appellation:"Cahors (Malbec)",weingut:"",farbe:"Rot",leg:["1900","1921","1929","1945","1947","1961","1970","1985","1989","1990","1995","2000","2003","2005","2009","2010","2015"],good:["1955","1959","1964","1966","1971","1976","1978","1982","1988","1994","1996","1999","2001","2006","2007","2012","2016","2018"],note:"'Schwarzer Wein von Cahors'. Malbec/Côt. Clos Triguedina und Lagrezette führend."},
+  {region:"Sud-Ouest",appellation:"Madiran / Pacherenc",weingut:"",farbe:"Rot",leg:["1928","1945","1961","1975","1985","1989","1990","1995","2000","2001","2003","2005","2009","2010","2015","2016"],good:["1947","1959","1964","1970","1971","1976","1980","1982","1985","1988","1994","1996","1999","2006","2007","2012","2017","2018"],note:"Tannat. Château Montus/Bouscassé (Brumont) revolutionierte die Appellation ab 1980."},
+  {region:"Sud-Ouest",appellation:"Jurançon (Süß/Sec)",weingut:"",farbe:"Süß",leg:["1900","1921","1945","1959","1967","1976","1983","1988","1989","1990","1995","1997","2001","2003","2007","2009","2010","2011","2014","2015"],good:["1928","1947","1953","1961","1966","1969","1971","1985","1992","1994","1996","1998","2000","2002","2005","2006","2012","2016","2017","2018"],note:"Gros und Petit Manseng. Domaine Cauhapé Benchmark. Moelleux 30+ Jahre lagerfähig."}
+];
+
+function colorBadge(f){
+  if(f==="Rot") return '<span class="badge b-r">R</span>';
+  if(f==="Weiß") return '<span class="badge b-w">W</span>';
+  if(f.includes("Süß")) return '<span class="badge b-s">S</span>';
+  if(f==="Rosé") return '<span class="badge b-ro">Ro</span>';
+  if(f==="Schaumwein") return '<span class="badge b-sc">Sc</span>';
+  return f;
+}
+function yrs(arr,cls){return arr.map(y=>`<span class="yr ${cls}">${y}</span>`).join('');}
+function eraMatch(row,era){
+  if(!era) return true;
+  const allYears=[...row.leg,...row.good].map(y=>parseInt(y));
+  const start=parseInt(era);
+  const ranges={"1900":1929,"1930":1959,"1960":1979,"1980":1999,"2000":2015,"2016":2100};
+  return allYears.some(y=>y>=start&&y<=ranges[era]);
+}
+function filterTable(){
+  const srch=document.getElementById('srch').value.toLowerCase();
+  const reg=document.getElementById('fReg').value;
+  const col=document.getElementById('fColor').value;
+  const era=document.getElementById('fEra').value;
+  const tbody=document.getElementById('tbody');
+  let lastRegion=null;
+  tbody.innerHTML='';
+  DATA.forEach(row=>{
+    const matchSrch=!srch||(row.region+row.appellation+row.weingut+row.note+row.leg.join(' ')+row.good.join(' ')).toLowerCase().includes(srch);
+    const matchReg=!reg||row.region===reg;
+    const matchCol=!col||row.farbe.includes(col);
+    const matchEra=eraMatch(row,era);
+    if(!matchSrch||!matchReg||!matchCol||!matchEra) return;
+    if(row.region!==lastRegion){
+      const hr=document.createElement('tr');
+      hr.className='region-header';
+      hr.innerHTML=`<td colspan="6">${row.region}</td>`;
+      tbody.appendChild(hr);
+      lastRegion=row.region;
+    }
+    let legF=row.leg,goodF=row.good;
+    if(era){const s=parseInt(era);const ends={"1900":1929,"1930":1959,"1960":1979,"1980":1999,"2000":2015,"2016":2100};const e=ends[era];legF=row.leg.filter(y=>parseInt(y)>=s&&parseInt(y)<=e);goodF=row.good.filter(y=>parseInt(y)>=s&&parseInt(y)<=e);}
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="font-size:12px;color:#666">${row.region}</td><td><div class="app-name">${row.appellation.split(' — ')[row.appellation.includes(' — ')?1:0]}</div>${row.weingut?`<div class="wg-name">${row.weingut}</div>`:''}</td><td>${colorBadge(row.farbe)}</td><td><div class="years">${yrs(legF,'yr-leg')}</div></td><td><div class="years">${yrs(goodF,'yr-good')}</div></td><td class="note">${row.note}</td>`;
+    tbody.appendChild(tr);
+  });
+  if(!tbody.innerHTML) tbody.innerHTML=`<tr><td colspan="6" style="text-align:center;padding:2rem;color:#999">Keine Einträge gefunden.</td></tr>`;
+}
+filterTable();
+</script>
+</body>
+</html>
